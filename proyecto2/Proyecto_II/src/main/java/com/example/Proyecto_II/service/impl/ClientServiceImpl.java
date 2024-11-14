@@ -34,7 +34,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<Client> listClients() {
         return clientRepository.findAll().stream()
-                .filter(client -> client.getAccountCount() > 0)  // solo clientes con cuentas activas, por ejemplo
+                .filter(client -> client.getAccountCount() >= 0)
                 .collect(Collectors.toList());
     }
 
