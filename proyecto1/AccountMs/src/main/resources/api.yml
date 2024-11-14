@@ -1,0 +1,171 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: API de Cuentas Bancarias
+servers:
+  - url: http://localhost:8085
+paths:
+  /cuentas:
+    post:
+      summary: Crear una cuenta para un cliente
+      operationId: createCuenta
+      tags:
+        - cuentas
+      requestBody:
+        description: Datos de la cuenta a crear
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cuenta"
+      responses:
+        '201':
+          description: Cuenta creada
+        '400':
+          description: Error en los datos de la cuenta
+
+    get:
+      summary: Listar todas las cuentas bancarias
+      operationId: listCuentas
+      tags:
+        - cuentas
+      responses:
+        '200':
+          description: Lista de cuentas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cuenta"
+
+  /cuentas/{id}:
+    get:
+      summary: Obtener detalles de una cuenta por ID
+      operationId: getCuentaById
+      tags:
+        - cuentas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalles de la cuenta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cuenta"
+        '404':
+          description: Cuenta no encontrada
+
+    delete:
+      summary: Eliminar una cuenta bancaria
+      operationId: deleteCuenta
+      tags:
+        - cuentas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Cuenta eliminada
+        '404':
+          description: Cuenta no encontrada
+
+  /cuentas/{cuentaId}/depositar:
+    put:
+      summary: Realizar un depósito en una cuenta bancaria
+      operationId: depositarEnCuenta
+      tags:
+        - cuentas
+      parameters:
+        - name: cuentaId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Monto a depositar
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                monto:
+                  type: number
+                  format: double
+                  description: Monto a depositar en la cuenta
+      responses:
+        '200':
+          description: Depósito realizado exitosamente
+        '404':
+          description: Cuenta no encontrada
+        '400':
+          description: Monto inválido
+
+  /cuentas/{cuentaId}/retirar:
+    put:
+      summary: Realizar un retiro de una cuenta bancaria
+      operationId: retirarDeCuenta
+      tags:
+        - cuentas
+      parameters:
+        - name: cuentaId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Monto a retirar
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                monto:
+                  type: number
+                  format: double
+                  description: Monto a retirar de la cuenta
+      responses:
+        '200':
+          description: Retiro realizado exitosamente
+        '404':
+          description: Cuenta no encontrada
+        '400':
+          description: Monto inválido o fondos insuficientes
+
+components:
+  schemas:
+    Cuenta:
+      type: object
+      required:
+        - numeroCuenta
+        - saldo
+        - tipoCuenta
+        - clienteId
+      properties:
+        id:
+          type: integer
+          description: Identificador único de la cuenta
+        numeroCuenta:
+          type: string
+          description: Número de cuenta único
+        saldo:
+          type: number
+          format: double
+          description: Saldo de la cuenta
+        tipoCuenta:
+          type: string
+          enum: [AHORROS, CORRIENTE]
+          description: Tipo de cuenta (AHORROS o CORRIENTE)
+        clienteId:
+          type: integer
+          description: ID del cliente dueño de la cuenta

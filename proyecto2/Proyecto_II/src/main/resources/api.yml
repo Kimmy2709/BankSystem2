@@ -1,0 +1,135 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: API Bancaria
+servers:
+  - url: http://localhost:8085
+paths:
+  /clientes:
+    post:
+      summary: Crear un cliente nuevo
+      operationId: createCliente
+      tags:
+        - clientes
+      requestBody:
+        description: Datos del cliente a crear
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cliente"
+      responses:
+        '201':
+          description: Cliente creado
+        '400':
+          description: Error en los datos del cliente
+
+    get:
+      summary: Listar todos los clientes
+      operationId: listClientes
+      tags:
+        - clientes
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cliente"
+
+  /clientes/{id}:
+    get:
+      summary: Obtener detalles de un cliente por ID
+      operationId: getClienteById
+      tags:
+        - clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalles del cliente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        '404':
+          description: Cliente no encontrado
+
+    put:
+      summary: Actualizar los datos de un cliente
+      operationId: updateCliente
+      tags:
+        - clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Datos del cliente actualizados
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cliente"
+      responses:
+        '200':
+          description: Cliente actualizado
+        '404':
+          description: Cliente no encontrado
+
+    delete:
+      summary: Eliminar un cliente
+      operationId: deleteCliente
+      tags:
+        - clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Cliente eliminado
+        '400':
+          description: No se puede eliminar cliente con cuentas activas
+        '404':
+          description: Cliente no encontrado
+
+
+components:
+  schemas:
+    Cliente:
+      type: object
+      required:
+        - nombre
+        - apellido
+        - dni
+        - email
+      properties:
+        id:
+          type: integer
+          description: Identificador único del cliente
+        nombre:
+          type: string
+          description: Nombre del cliente
+        apellido:
+          type: string
+          description: Apellido del cliente
+        dni:
+          type: string
+          description: DNI del cliente (único)
+        email:
+          type: string
+          description: Correo electrónico del cliente
+          format: email
+
+
